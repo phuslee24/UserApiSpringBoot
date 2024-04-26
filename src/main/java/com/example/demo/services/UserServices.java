@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.example.demo.dto.userDto;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepo;
+import com.example.demo.utils.ObjectMapping;
 
 @Service
 public class UserServices implements UserServiceInterface {
@@ -26,9 +26,8 @@ public class UserServices implements UserServiceInterface {
 
     @Override
     public User creatUser(userDto userDto) {
-        User user = new User();
-        user.setUserName(userDto.getUserName());
-        user.setPassword(userDto.getPassword());
+        ObjectMapping<User,userDto> objectmapping = new ObjectMapping<>();
+        User user =  objectmapping.mapToModel(userDto, new User());
         return uRepo.save(user);
 
     }
@@ -38,8 +37,16 @@ public class UserServices implements UserServiceInterface {
         User user = uRepo.findById(id).get();
         user.setUserName(userDto.getUserName());
         user.setPassword(userDto.getPassword());
+        user.setUpdatedAt(null);
         uRepo.save(user);
         return user;
+    }
+
+    @Override
+    public List<User> search(String keyWord) {
+
+        
+        return uRepo.searchAllUsersByUsernamUsers(keyWord);
     }
 
     @Override
@@ -51,4 +58,8 @@ public class UserServices implements UserServiceInterface {
         return user;
 
     }
+
+  
+
+ 
 }
